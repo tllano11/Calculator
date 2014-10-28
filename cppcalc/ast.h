@@ -48,6 +48,18 @@ class SubNode : public BinaryNode {
    int evaluate();
 };
 
+class TimesNode : public BinaryNode {
+ public:
+   TimesNode(AST* left, AST* right);
+   int evaluate();
+};
+
+class DivideNode : public BinaryNode {
+ public:
+   DivideNode(AST* left, AST* right);
+   int evaluate(); 
+};
+
 class NumNode : public AST {
  public:
    NumNode(int n);
