@@ -43,6 +43,12 @@ AST* Parser::RestExpr(AST* e) {
    if (t->getType() == sub)
       return RestExpr(new SubNode(e,Term()));
 
+   if (t->getType() == times)
+      return RestExpr(new TimesNode(e,Term()));
+
+   if (t->getType() == divide)
+      return RestExpr(new DivideNode(e,Term()));
+
    scan->putBackToken();
 
    return e;
