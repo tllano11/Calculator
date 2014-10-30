@@ -70,8 +70,19 @@ class NumNode : public AST {
    int val;
 };
 
+class StoreNode : public UnaryNode {
+  public:
+    StoreNode(AST* sub);
+    ~StoreNode();
+    int evaluate();
+};
 
+class RecallNode : public AST {
+ public:
+  RecallNode();
 
+  int evaluate();
+};
 
 #endif
 

@@ -1,4 +1,4 @@
-#ifndef calculator_h
+#pragma one
 #define calculator_h
 
 #include <string>
@@ -20,5 +20,4 @@ class Calculator {
 
 extern Calculator* calc;
 
-#endif
 
