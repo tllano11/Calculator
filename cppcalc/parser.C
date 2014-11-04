@@ -43,49 +43,102 @@ AST* Parser::RestExpr(AST* e) {
    if (t->getType() == sub)
       return RestExpr(new SubNode(e,Term()));
 
-   if (t->getType() == times)
-      return RestExpr(new TimesNode(e,Term()));
-
-   if (t->getType() == divide)
-      return RestExpr(new DivideNode(e,Term()));
-
    scan->putBackToken();
 
    return e;
 }
 
 AST* Parser::Term() {
+  
+   return RestTerm(Storable());
    //write your Term() code here. This code is just temporary
    //so you can try the calculator out before finishing it.
+//   Token* t = scan->getToken();
+
+//   if (t->getType() == number) {
+//      istringstream in(t->getLex());
+//      int val;
+//      in >> val;
+//      return new NumNode(val);
+//   }
+
+//   cout << "Term not implemented" << endl;
+
+//   throw ParseError; 
+}
+
+AST* Parser::RestTerm(AST* e) {
+    
    Token* t = scan->getToken();
 
+   if (t->getType() == times)
+      return RestTerm(new TimesNode(e,Storable()));
+   
+   if (t->getType() == divide)
+      return RestTerm(new DivideNode(e,Storable()));
+   
+    scan ->putBackToken();
+  
+   return e;
+}
+
+AST* Parser::Storable() {
+  AST* result = Factor();
+  Token* t = scan->getToken();
+
+  if(t->getType() == keyword){
+    
+    if(t->getLex().compare("S") == 0){
+      return new StoreNode(result);
+    }else{
+      cout << "Expected a keyword S at column: " 
+           << t->getCol() << endl;
+      throw ParseError;
+    }
+  }
+  scan->putBackToken();
+  return result;
+}
+
+AST* Parser::Factor() {
+  Token* t = scan->getToken();
+  
    if (t->getType() == number) {
       istringstream in(t->getLex());
       int val;
       in >> val;
       return new NumNode(val);
    }
+   
+   if(t->getType() == keyword){
+    
+    if(t->getLex().compare("R") == 0){
+      return new RecallNode();
+    }else{
+      cout << "Expected a keyword S at column: " 
+           << t->getCol() << endl;
+      throw ParseError;
+    }
+  }
 
-   cout << "Term not implemented" << endl;
+  if(t->getType() == lparen){
 
-   throw ParseError; 
-}
+    AST* result = Expr();
+    t = scan->getToken();
+    
+    if(t->getType() == rparen){
+      return result;
+    }else{
+      
+      cout << "Expected a keyword S at column: " 
+           << t->getCol() << endl;
+      throw ParseError;
+    }
 
-AST* Parser::RestTerm(AST* e) {
-   cout << "RestTerm not implemented" << endl;
+  }
+  cout << "Expected a keyword R at column: " 
+         << t->getCol() << endl;
+  throw ParseError;
 
-   throw ParseError; 
-}
-
-AST* Parser::Storable() {
-   cout << "Storable not implemented" << endl;
-
-   throw ParseError; 
-}
-
-AST* Parser::Factor() {
-   cout << "Factor not implemented" << endl;
-
-   throw ParseError; 
 }
    
