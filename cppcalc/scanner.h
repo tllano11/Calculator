@@ -2,26 +2,24 @@
 
 #include <iostream>
 #include "token.h"
+#include <vector>
 
 class Scanner {
-public:
-  Scanner(istream* in);
-  ~Scanner();
+  public:
+    Scanner(istream* in);
+    ~Scanner();
 
-  Token* getToken();
-  void putBackToken();
- 
-private:
-  Scanner();
+    Token* getToken();
+    void putBackToken();
 
-  istream* inStream;
-  int lineCount;
-  int colCount;
+  private:
+    Scanner();
+    istream* inStream;
+    int lineCount;
+    int colCount;
 
-  bool needToken;
-  Token* lastToken;
+    bool needToken;
+    Token* lastToken;
 };
 
-  
-  
-
+extern vector<char> tokenRepository;

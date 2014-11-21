@@ -8,7 +8,7 @@ Token::Token() :
 
 Token::~Token() {}
 
-Token::Token(TokenType typ, int lineNum, int colNum) : 
+Token::Token(TokenType typ, int lineNum, int colNum) :
   type(typ),
   line(lineNum),
   col(colNum)
@@ -29,17 +29,16 @@ int Token::getCol() const {
 string Token::getLex() const { return ""; }
 
 LexicalToken::LexicalToken(TokenType typ, string* lex, int lineNum, int colNum) :
-   Token(typ,lineNum,colNum),
-   lexeme(lex)
+  Token(typ,lineNum,colNum),
+  lexeme(lex)
 {}
 
 LexicalToken::~LexicalToken() {
-   try {
-      delete lexeme;
-   } catch (...) {}
+  try {
+    delete lexeme;
+  } catch (...) {}
 }
 
 string LexicalToken::getLex() const {
   return *lexeme;
 }
-

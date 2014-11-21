@@ -5,39 +5,34 @@
 using namespace std;
 
 enum TokenType {
-   identifier,keyword,number,add,sub,times,divide,lparen,rparen,eof,unrecognized
+  identifier,keyword,number,add,sub,times,divide,mod,lparen,rparen,eof,eol,unrecognized
 };
 
 class Token {
-public:
+  public:
+    Token();
+    Token(TokenType typ, int line, int col);
+    virtual ~Token();
 
-  Token();
-  Token(TokenType typ, int line, int col);
-  virtual ~Token();
+    TokenType getType() const;
+    int getLine() const;
+    int getCol() const;
+    virtual string getLex() const;
 
-  TokenType getType() const;
-  int getLine() const;
-  int getCol() const;
-  virtual string getLex() const;
-
-private:
-  TokenType type;
-  int line,col;
+  private:
+    TokenType type;
+    int line,col;
 };
 
 class LexicalToken: public Token {
- public:
-   LexicalToken(TokenType typ, string* lex, int line, int col);
-   ~LexicalToken();
+  public:
+    LexicalToken(TokenType typ, string* lex, int line, int col);
+    ~LexicalToken();
 
-   virtual string getLex() const;
+    virtual string getLex() const;
 
- private:
-   string* lexeme;
+  private:
+    string* lexeme;
 };
 
 #endif
-
-
-
-

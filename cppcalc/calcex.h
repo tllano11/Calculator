@@ -2,8 +2,9 @@
 #define evalex_h
 
 enum Exception {
-  UnrecognizedToken, //Token in object file not recognized
-  ParseError
+  UnrecognizedToken, // Token in object file not recognized
+  ParseError,
+  ScannerException
 };
 
 #endif
