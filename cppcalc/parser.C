@@ -1,8 +1,9 @@
 #include "parser.h"
 #include "calcex.h"
 #include "scanner.h"
-#include <string>
+#include <cstdlib>
 #include <sstream>
+#include <string>
 
 Parser::Parser(istream* in) {
   scan = new Scanner(in);
@@ -24,9 +25,10 @@ AST* Parser::Prog() {
   if (t->getType() != eof) {
     scan -> putBackToken();
     AST* result = Stmts(Stmt(), t);
+    return result;
   } else {
     cout << "* Parse error" << endl;
-    throw ParseError;
+    throw ParseException;
   }
 }
 
@@ -102,7 +104,7 @@ AST* Parser::MemOperation(AST* result) {
         } else {
           cout << "* Expected a keyword S, P or M at column: "
                << t->getCol() << endl;
-          throw ParseError;
+          throw ParseException;
         }
       }
     }
@@ -126,6 +128,26 @@ AST* Parser::Factor() {
     return tree;
   }
 
+  //The following if statement evaluates if the given 
+  //identifier is a unary node identifier of a
+  //leaf node identifier.
+  if (t -> getType() == identifier && equalVerify) {
+    try {
+
+      //throws exception if t -> getLex() doesn't exist in variables.
+      //Remark: using [] is different from using .at
+      int val = identifiers.at(t -> getLex());
+      return new IdentifierLNode(val);
+    } catch(...) {
+      string strCalc = "CALCVAR_" + t -> getLex();
+      char* envValue = getenv(strCalc.c_str());
+      if (envValue != NULL)
+        return new IdentifierLNode(atoi(envValue)); 
+
+      return new IdentifierLNode(0);
+    }
+  }
+
   if (t->getType() == keyword) {
     if (t->getLex().compare("R") == 0) {
        return new RecallNode();
@@ -134,7 +156,7 @@ AST* Parser::Factor() {
     } else {
       cout << "* Expected a keyword R or C at column: "
            << t->getCol() << endl;
-      throw ParseError;
+      throw ParseException;
     }
   }
 
@@ -146,11 +168,11 @@ AST* Parser::Factor() {
     } else {
       cout << "* Expected a ( or ) at column: "
            << t->getCol() << endl;
-      throw ParseError;
+      throw ParseException;
     }
   }
 
   cout << "* Expected a number, R or ( at column: "
        << t->getCol() << endl;
-  throw ParseError;
+  throw ParseException;
 }

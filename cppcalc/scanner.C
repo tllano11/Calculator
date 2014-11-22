@@ -10,6 +10,10 @@ using namespace std;
 
 const int numberOfKeywords = 5;
 
+//equalVerify will be true if and only if a '=' char
+//is found by the scanner.
+bool equalVerify = false;
+
 const string keywd[numberOfKeywords] = {
   string("S"), string("P"), string("M"), string("R"), string("C")
 };
@@ -80,11 +84,17 @@ Token* Scanner::getToken() {
         else if (c=='=') {
           if (!tokenRepository.empty()) {
             if (tokenRepository.back() < 'a' || tokenRepository.back() > 'z') {
-              cout << "* Syntax error" << endl;
+              cout << " * Syntax error." << endl;
               throw ScannerException;
             }
           }
+          
           tokenRepository.push_back(c);
+          
+          //The following line indicates that a char('=') has been found
+          //and if the scanner finds new identifiers, those identifiers
+          // are going to be labeled as leaf node identifiers.
+          equalVerify = true;
           colCount++;
         }
         else if (c==';') {
@@ -104,7 +114,7 @@ Token* Scanner::getToken() {
           foundOne=true;
           type=eof;
         } else {
-          cout << "*Unrecognized Token found at line " << line <<
+          cout << "* Unrecognized Token found at line " << line <<
                   " and column " << column << endl;
           throw UnrecognizedToken;
         }

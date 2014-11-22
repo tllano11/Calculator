@@ -10,6 +10,7 @@ class Parser {
     Parser(istream* in);
     ~Parser();
     AST* parse();
+    // map<string, AST*> variables;
 
   private:
     AST* Prog();
@@ -27,5 +28,7 @@ class Parser {
 };
 
 extern map<string, int> identifiers;
+
+extern bool equalVerify;
 
 #endif

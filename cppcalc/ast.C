@@ -156,6 +156,15 @@ int IdentifierNode::evaluate() {
   return 0;
 }
 
+IdentifierLNode::IdentifierLNode(int n) :
+  AST(),
+  value(n)
+{}
+
+int IdentifierLNode::evaluate() {
+  return value;
+}
+
 EqualsNode::EqualsNode(AST* sub) :
   UnaryNode(sub)
 {}

@@ -3,7 +3,7 @@
 
 enum Exception {
   UnrecognizedToken, // Token in object file not recognized
-  ParseError,
+  ParseException,
   ScannerException
 };
 

@@ -89,7 +89,6 @@ class StoreNode : public UnaryNode {
 //The following class(P) is used to add a
 //value to memory and then return the
 //the new value obtained from the operation.
-
 class MemoryPlusNode : public UnaryNode {
   public:
     MemoryPlusNode(AST* sub);
@@ -99,7 +98,6 @@ class MemoryPlusNode : public UnaryNode {
 //The following class(M) is used to rest a
 //value from memory and then return the
 //the new value obtained from the operation.
-
 class MemoryMinusNode : public UnaryNode {
   public:
     MemoryMinusNode(AST* sub);
@@ -114,7 +112,6 @@ class RecallNode : public AST {
 
 //The following class(C) is used to clear
 //memory.
-
 class MemoryClearNode : public AST {
   public:
     MemoryClearNode();
@@ -125,6 +122,19 @@ class IdentifierNode : public UnaryNode {
   public:
     IdentifierNode(AST* sub);
     int evaluate();
+};
+
+//IdentifierLNode is used to differentiate a unary
+//node identifier from a leaf node identifier.
+//Remark: If an identifier follows a '=' char,
+//then it is a leaf node identifier.
+ class IdentifierLNode : public AST {
+  public:
+    IdentifierLNode(int n);
+    int evaluate();
+
+  private:
+    int value;
 };
 
 class EqualsNode : public UnaryNode {
