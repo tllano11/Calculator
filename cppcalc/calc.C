@@ -1,12 +1,13 @@
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include <string.h> // needed for .c_str()
 #include <string>
 #include <stdlib.h>
 #include "calcex.h"
 #include "calculator.h"
 #include "scanner.h"
 #include "parser.h"
-#include <string.h>
 
 using namespace std;
 
@@ -46,6 +47,11 @@ void argVaribleInsert(string s) {
   //it's possible.  
   int b = atoi(strValue.c_str());
   identifiers[charIdentifier] = b;
+}
+
+//endsComparison compares if str ends with suffix.
+bool endsComparison(string str, string suffix) {
+  return str.rfind(suffix) == (str.size() - suffix.size());
 }
 
 void beginCalculation(string line){
@@ -88,6 +94,13 @@ void commandVerify(int i,char* argv[]){
   string arg = argv[i];
   
   if(arg.compare("-v") == 0) argVaribleInsert(argv[i+1]);
+  if (endsComparison(arg, ".calc")) {
+    ifstream input(arg.c_str());
+    string inputLine;
+    while (getline(input, inputLine)){
+      beginCalculation(inputLine);
+    }
+  }
 }
 
 int main(int argc, char* argv[], char* env[]) {
@@ -99,14 +112,14 @@ int main(int argc, char* argv[], char* env[]) {
     try {
       commandVerify(i,argv);
     } catch(...) {
-      cout << " * Invalid argument." << endl;
+      cout << "* Invalid argument." << endl;
       return 0; 
     }
   }
 
   cout << "> ";
 
- while(getline(cin,line)) {
+  while(getline(cin,line)) {
   	
     beginCalculation(line);
     cout << "> ";
