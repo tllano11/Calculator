@@ -4,7 +4,8 @@
 enum Exception {
   UnrecognizedToken, // Token in object file not recognized
   ParseException,
-  ScannerException
+  ScannerException,
+  ArgsException
 };
 
 #endif

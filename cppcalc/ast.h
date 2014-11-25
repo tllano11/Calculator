@@ -1,6 +1,8 @@
 #ifndef ast_h
 #define ast_h
 
+#include <fstream>
+
 using namespace std;
 
 class AST {
@@ -134,7 +136,7 @@ class IdentifierNode : public UnaryNode {
     int evaluate();
 
   private:
-    int value;
+    int val;
 };
 
 class EqualsNode : public UnaryNode {
@@ -142,5 +144,8 @@ class EqualsNode : public UnaryNode {
     EqualsNode(AST* sub);
     int evaluate();
 };
+
+extern bool eweCompiler;
+extern ofstream output;
 
 #endif

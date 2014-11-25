@@ -61,7 +61,16 @@ AddNode::AddNode(AST* left, AST* right):
 {}
 
 int AddNode::evaluate() {
-  return getLeftSubTree()->evaluate() + getRightSubTree()->evaluate();
+  int result = getLeftSubTree()->evaluate() + getRightSubTree()->evaluate();
+  if(eweCompiler){
+    output<<"# Add\n";
+    output<<"operator2 := M[sp+0]\n";
+    output<<"operator1 := M[sp+1]\n";
+    output<<"operator1 := operator1 + operator2\n";
+    output<<"sp := sp + one\n";
+    output<<"M[sp+0]:= operator1\n\n";
+  }	
+  return result;
 }
 
 SubNode::SubNode(AST* left, AST* right):
@@ -69,7 +78,16 @@ SubNode::SubNode(AST* left, AST* right):
 {}
 
 int SubNode::evaluate() {
-  return getLeftSubTree()->evaluate() - getRightSubTree()->evaluate();
+  int result = getLeftSubTree()->evaluate() - getRightSubTree()->evaluate();
+  if(eweCompiler){
+    output<<"# Sub\n";
+    output<<"operator2 := M[sp+0]\n";
+    output<<"operator1 := M[sp+1]\n";
+    output<<"operator1 := operator1 - operator2\n";
+    output<<"sp := sp + one\n";
+    output<<"M[sp+0]:= operator1\n\n";
+  }	
+  return result;
 }
 
 TimesNode::TimesNode(AST* left, AST* right):
@@ -77,7 +95,16 @@ TimesNode::TimesNode(AST* left, AST* right):
 {}
 
 int TimesNode::evaluate() {
-  return getLeftSubTree()->evaluate() * getRightSubTree()->evaluate();
+  int result = getLeftSubTree()->evaluate() * getRightSubTree()->evaluate();
+  if(eweCompiler){
+    output<<"# Times\n";
+    output<<"operator2 := M[sp+0]\n";
+    output<<"operator1 := M[sp+1]\n";
+    output<<"operator1 := operator1 * operator2\n";
+    output<<"sp := sp + one\n";
+    output<<"M[sp+0]:= operator1\n\n";
+  }	
+  return result;
 }
 
 DivideNode::DivideNode(AST* left, AST* right):
@@ -85,7 +112,16 @@ DivideNode::DivideNode(AST* left, AST* right):
 {}
 
 int DivideNode::evaluate() {
-  return getLeftSubTree()->evaluate() / getRightSubTree()->evaluate();
+  int result = getLeftSubTree()->evaluate() / getRightSubTree()->evaluate();
+  if(eweCompiler){
+    output<<"# Divide\n";
+    output<<"operator2 := M[sp+0]\n";
+    output<<"operator1 := M[sp+1]\n";
+    output<<"operator1 := operator1 / operator2\n";
+    output<<"sp := sp + one\n";
+    output<<"M[sp+0]:= operator1\n\n";
+  }	
+  return result;
 }
 
 ModNode::ModNode(AST* left, AST* right):
@@ -93,7 +129,16 @@ ModNode::ModNode(AST* left, AST* right):
 {}
 
 int ModNode::evaluate() {
-  return getLeftSubTree()->evaluate() % getRightSubTree()->evaluate();
+  int result = getLeftSubTree()->evaluate() % getRightSubTree()->evaluate();
+  if(eweCompiler){
+    output<<"# Mod\n";
+    output<<"operator2 := M[sp+0]\n";
+    output<<"operator1 := M[sp+1]\n";
+    output<<"operator1 := operator1"<<'%'<<"operator2\n";
+    output<<"sp := sp + one\n";
+    output<<"M[sp+0]:= operator1\n\n";
+  }	
+  return result;
 }
 
 StmtNode::StmtNode(AST* left, AST* right):
@@ -112,6 +157,10 @@ StoreNode::~StoreNode() {}
 
 int StoreNode::evaluate() {
   calc->store(getSubTree()->evaluate());
+  if(eweCompiler){
+    output << "# Store\n";
+    output << "memory := M[sp+0]\n\n";
+  }
   return calc->recall();
 }
 
@@ -119,31 +168,66 @@ MemoryPlusNode::MemoryPlusNode(AST* sub) :
   UnaryNode(sub)
 {}
 
+//In the following method the subtree evaluation is
+//done before calling the "recall" method.
+//This procedure is followed to ensure that all
+//memOperations found at the subtree work properly.
 int MemoryPlusNode::evaluate() {
-  int val = calc -> recall() + getSubTree() -> evaluate();
-  calc -> store(val);
-  return val;
+  int val = getSubTree() -> evaluate();
+  int mem = calc -> recall();
+  int result = mem + val;
+  if(eweCompiler){
+    output << "# Memory Plus\n";
+    output << "operator2 := M[sp+0]\n";
+    output << "memory := memory + operator2\n";
+    output << "M[sp+0] := memory\n\n";
+  }
+  calc -> store(result);
+  return result;
 }
 
 MemoryMinusNode::MemoryMinusNode(AST* sub) :
   UnaryNode(sub)
 {}
 
+//In the following method the subtree evaluation is
+//done before calling the "recall" method.
+//This procedure is followed to ensure that all
+//memOperations found at the subtree work properly.
 int MemoryMinusNode::evaluate() {
-  int val = calc -> recall() - getSubTree() -> evaluate();
-  calc -> store(val);
-  return val;
+  int val = getSubTree() -> evaluate();
+  int mem = calc -> recall();
+  int result = mem - val;
+  if(eweCompiler){
+    output << "# Memory Minus\n";
+    output << "operator2 := M[sp+0]\n";
+    output << "memory := memory - operator2\n";
+    output << "M[sp+0] := memory\n\n";
+  }
+  calc -> store(result);
+  return result;
 }
 
 RecallNode::RecallNode() : AST() {}
 
 int RecallNode::evaluate() {
+  if(eweCompiler){
+    output <<"# Recall\n";
+    output << "sp := sp - one\n";
+    output << "M[sp+0] := memory\n\n";
+  }	
   return calc->recall();
 }
 
 MemoryClearNode::MemoryClearNode() : AST() {}
 
 int MemoryClearNode::evaluate() {
+  if(eweCompiler){
+    output << "# Memory Clear\n";
+    output << "memory := zero\n";
+    output << "sp := sp - one\n";
+    output << "M[sp+0] := memory\n\n";
+  }
   calc -> store(0);
   return 0;
 }
@@ -153,16 +237,22 @@ IdentifierNode::IdentifierNode(AST* sub) :
 {}
 
 int IdentifierNode::evaluate() {
-  return 0;
+  return getSubTree() -> evaluate();
 }
 
 IdentifierLNode::IdentifierLNode(int n) :
   AST(),
-  value(n)
+  val(n)
 {}
 
 int IdentifierLNode::evaluate() {
-  return value;
+  if(eweCompiler){
+    output << "# Push("<<val<<")\n";
+    output << "sp:= sp - one\n";
+    output << "operator1:= "<<val<<'\n';
+    output << "M[sp+0]:= operator1\n\n";
+  }
+  return val;
 }
 
 EqualsNode::EqualsNode(AST* sub) :
@@ -170,7 +260,7 @@ EqualsNode::EqualsNode(AST* sub) :
 {}
 
 int EqualsNode::evaluate() {
-  return 0;
+  return getSubTree() -> evaluate();
 }
 
 NumNode::NumNode(int n) :
@@ -179,5 +269,11 @@ NumNode::NumNode(int n) :
 {}
 
 int NumNode::evaluate() {
+  if(eweCompiler){
+    output << "# Push("<<val<<")\n";
+    output << "sp:= sp - one\n";
+    output << "operator1:= "<<val<<'\n';
+    output << "M[sp+0]:= operator1\n\n";
+  }
   return val;
 }

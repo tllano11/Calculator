@@ -17,5 +17,7 @@ class Calculator {
 };
 
 extern Calculator* calc;
+extern bool eweCompiler;
+extern ofstream output;
 
 #endif

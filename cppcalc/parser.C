@@ -24,7 +24,7 @@ AST* Parser::Prog() {
 
   if (t->getType() != eof) {
     scan -> putBackToken();
-    AST* result = Stmts(Stmt(), t);
+    AST* result = Stmts(Stmt());
     return result;
   } else {
     cout << "* Parse error" << endl;
@@ -32,18 +32,12 @@ AST* Parser::Prog() {
   }
 }
 
-AST* Parser::Stmts(AST* a, Token* t) {
-  identifiers[t -> getLex()] = a -> evaluate();
+AST* Parser::Stmts(AST* a) {
   return a;
 }
 
 AST* Parser::Stmt() {
   Token* t = scan -> getToken();
-
-  if (t -> getLex().compare("=") == 0) {
-    AST* tree = new IdentifierNode(new EqualsNode(Expr()));
-    return tree;
-  }
   return Expr();
 }
 
@@ -97,12 +91,12 @@ AST* Parser::MemOperation(AST* result) {
       return new StoreNode(result);
     } else {
       if (t->getLex().compare("P") == 0) {
-        return new MemoryPlusNode(result);
+	    return new MemoryPlusNode(result);
       } else {
         if (t->getLex().compare("M") == 0) {
           return new MemoryMinusNode(result);
         } else {
-          cout << "* Expected a keyword S, P or M at column: "
+          cout << " * Expected a keyword S, P or M at column: "
                << t->getCol() << endl;
           throw ParseException;
         }
@@ -154,7 +148,7 @@ AST* Parser::Factor() {
     } else if (t -> getLex().compare("C") == 0) {
       return new MemoryClearNode();
     } else {
-      cout << "* Expected a keyword R or C at column: "
+      cout << " * Expected a keyword R or C at column: "
            << t->getCol() << endl;
       throw ParseException;
     }
@@ -166,13 +160,13 @@ AST* Parser::Factor() {
     if(t->getType() == rparen) {
       return result;
     } else {
-      cout << "* Expected a ( or ) at column: "
+      cout << " * Expected a ) at column: "
            << t->getCol() << endl;
       throw ParseException;
     }
   }
 
-  cout << "* Expected a number, R or ( at column: "
+  cout << " * Expected a number, R or ( at column: "
        << t->getCol() << endl;
   throw ParseException;
 }

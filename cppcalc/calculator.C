@@ -25,6 +25,20 @@ int Calculator::eval(string expr) {
   Parser* parser = new Parser(new istringstream(expr));
   AST* tree = parser->parse();
   int result = tree->evaluate();
+
+  //Variable allocation
+  string key(1, tokenRepository[0]);
+  identifiers[key] = result;
+  if(eweCompiler){
+    output << "# Assign\n";
+    output << key << ":= M[sp+0]\n\n";
+
+    output << "# Write result\n";
+    output << "operator1 := M[sp+0]\n";
+    output << "sp := sp - one\n";
+    output << "writeInt(operator1)\n\n";
+  }
+
   delete tree;
   delete parser;
   return result;
