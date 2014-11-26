@@ -53,8 +53,8 @@ void argVaribleInsert(string s) {
   string strValue;
   if(int i = colCounter + 1 < length-1){
     for(int i = colCounter + 1; i < length-1; i++)
-      if(charArg[i]>='0' and charArg[i]<='9')	
-        strValue += charArg[i];	
+      if(charArg[i]>='0' and charArg[i]<='9') 
+        strValue += charArg[i]; 
       else throw ArgsException;
   }else throw ArgsException;
 
@@ -74,6 +74,7 @@ bool endsComparison(string str, string suffix) {
 //beginCalculation starts all the calculation process.
 void beginCalculation(string line){
   try {
+    if(line.length() == 0) throw ScannerException;
     calc = new Calculator();
     int result = calc->eval(line);
 
@@ -111,34 +112,39 @@ void beginCalculation(string line){
 //initCompiler turns eweCompiler true and allows the program
 //to work as a compiler.
 void initCompiler(string line, int lineCounter){
-
-  if(eweCompiler != true) eweCompiler = true;
-  output << "# Expression: " << line +"\n\n";
-  if(lineCounter == 0){
-    output << "start:\n\n";
-    output << "# Instructions before evaluating the AST\n";
-  }else{
-    output << "expr"<<(lineCounter+1)<<":\n";
-    output << "# Instructions before evaluating the AST from expr"
-   	   <<(lineCounter+1)<<'\n';
-  }
-  output << "sp:= 1000\n";
-  output << "one:= 1\n";
-  output << "zero:= 0\n";
-  output << "memory:= zero\n";
-
-  if(identifiers.size() != 0){
-
-    //The following 4 lines are used to check every map key,
-    //and the values labeled by them, and write them into
-    //a.ewe
-    map<string, int>::iterator i;
-    for(i=identifiers.begin(); i!=identifiers.end();++i){
-      output << (*i).first << ":= " << (*i).second << '\n';
+  try{
+    if(line.length() == 0) throw ScannerException;
+    if(eweCompiler != true) eweCompiler = true;
+    output << "# Expression: " << line +"\n\n";
+    if(lineCounter == 0){
+      output << "start:\n\n";
+      output << "# Instructions before evaluating the AST\n";
+    }else{
+      output << "expr"<<(lineCounter+1)<<":\n";
+      output << "# Instructions before evaluating the AST from expr"
+         <<(lineCounter+1)<<'\n';
     }
+    output << "sp:= 1000\n";
+    output << "one:= 1\n";
+    output << "zero:= 0\n";
+    output << "memory:= zero\n";
+
+    if(identifiers.size() != 0){
+
+      //The following 4 lines are used to check every map key,
+      //and the values labeled by them, and write them into
+      //a.ewe
+      map<string, int>::iterator i;
+      for(i=identifiers.begin(); i!=identifiers.end();++i){
+        output << (*i).first << ":= " << (*i).second << '\n';
+      }
+    }
+    output << '\n';
+    beginCalculation(line);
+  }catch(...){
+      tokenRepository.clear();
+      cout << " * Invalid expression" << endl;
   }
-  output << '\n';
-  beginCalculation(line);
 }
 
 //initFileCompiler creates, or superscribes, a .ewe file
@@ -174,10 +180,10 @@ void commandVerify(int &i,char* argv[],int argc){
   //found after a .calc file the program will stop and show
   //an exception.
   else if(endsComparison(arg, ".calc") and arg.size()>5){
-  	int aux = i;
-  	string verify;
-  	while(aux < argc){
-  	  verify = argv[aux++];	
+    int aux = i;
+    string verify;
+    while(aux < argc){
+      verify = argv[aux++]; 
       if(!endsComparison(verify, ".calc")) throw ArgsException;
     }
     ifstream input(arg.c_str());
@@ -197,8 +203,8 @@ void commandVerify(int &i,char* argv[],int argc){
     if(i<(argc-1) and endsComparison(argv[++aux], ".calc")){
 
       while(aux < argc){
-      	if(!endsComparison(argv[aux], ".calc")) throw ArgsException;
-      	aux++;
+        if(!endsComparison(argv[aux], ".calc")) throw ArgsException;
+        aux++;
       }
       aux = i;
       while(aux < argc){
@@ -206,14 +212,14 @@ void commandVerify(int &i,char* argv[],int argc){
         initFileCompiler(argv[aux++],lineCounter); 
 
         output << "end: halt\n\n";
-      	output << "equ memory M[0]\n";
-      	output << "equ one M[1]\n";
-      	output << "equ zero M[2]\n";
-      	output << "equ operator1 M[3]\n";
-      	output << "equ operator2 M[4]\n";
-      	output << "equ sp M[5]\n";
+        output << "equ memory M[0]\n";
+        output << "equ one M[1]\n";
+        output << "equ zero M[2]\n";
+        output << "equ operator1 M[3]\n";
+        output << "equ operator2 M[4]\n";
+        output << "equ sp M[5]\n";
     
-      	map<string, int>::iterator itr;
+        map<string, int>::iterator itr;
         int j = 6;
 
         //The following loop checks every identifier stored in the
@@ -232,15 +238,9 @@ void commandVerify(int &i,char* argv[],int argc){
       output.open("a.ewe");
       cout << "> ";
       while(getline(cin,line)){
-        if(line.length() != 0){
-          try{
-            initCompiler(line,lineCounter);
-          }catch(...) {
-            cout << " * Scanner error." << endl;
-          }
-          lineCounter++;
-        }
-        cout << "> ";	
+        initCompiler(line,lineCounter);
+        lineCounter++;
+        cout << "> "; 
       }
     
       output << "end: halt\n\n";
@@ -261,7 +261,7 @@ void commandVerify(int &i,char* argv[],int argc){
       output << "equ stack M[1000]\n";
       output.close();
       if(EOF){
-      	cout << endl;
+        cout << endl;
         exit(0);
       }
     }else if (i == argc - 1 and compilerCount > 1)
@@ -292,10 +292,8 @@ int main(int argc, char* argv[], char* env[]) {
   if(eweCompiler == false){
     cout << "> ";
     while(getline(cin,line)) {
-	  if(line.length()!=0){
-  	    beginCalculation(line);
-        cout << "> ";
-      }
+    beginCalculation(line);
+      cout << "> ";
     }
   }
   cout << "" << endl;
