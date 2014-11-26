@@ -206,7 +206,7 @@ void commandVerify(int &i,char* argv[],int argc){
         if(!endsComparison(argv[aux], ".calc")) throw ArgsException;
         aux++;
       }
-      aux = i;
+      aux = i+1;
       while(aux < argc){
         i++;
         initFileCompiler(argv[aux++],lineCounter); 
