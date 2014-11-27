@@ -37,6 +37,7 @@ AST* Parser::Stmts(AST* a) {
 }
 
 AST* Parser::Stmt() {
+  Token* t = scan->getToken();
   return Expr();
 }
 
