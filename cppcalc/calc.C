@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "calcex.h"
 #include "calculator.h"
-#include "scanner.h"	
+#include "scanner.h"
 #include "parser.h"
 
 using namespace std;
