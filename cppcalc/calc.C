@@ -75,7 +75,7 @@ bool endsComparison(string str, string suffix) {
 void beginCalculation(string line){
   try {
     if(line.length() == 0) throw ScannerException;
-    calc = new Calculator();
+    //calc = new Calculator();
     int result = calc->eval(line);
 
     char charArray[line.size()+1]; //Includes the '\0' char (+1)
@@ -101,7 +101,7 @@ void beginCalculation(string line){
     cout << "= " << tokenRepository[0] << " <- " << result << endl;
     tokenRepository.clear();
 
-    delete calc;
+    //delete calc;
 
   }catch(Exception ex){
     tokenRepository.clear();
@@ -127,7 +127,7 @@ void initCompiler(string line, int lineCounter){
     output << "sp:= 1000\n";
     output << "one:= 1\n";
     output << "zero:= 0\n";
-    output << "memory:= zero\n";
+    output << "memory:= " << calc -> recall() << "\n";
 
     if(identifiers.size() != 0){
 
@@ -275,6 +275,7 @@ int main(int argc, char* argv[], char* env[]) {
   string line;
   eweCompiler = false;
   compilerCount = 0;
+  calc = new Calculator();
 
   //The following "for loop" starts evaluating
   //the command line arguments.
@@ -297,5 +298,7 @@ int main(int argc, char* argv[], char* env[]) {
     }
   }
   cout << "" << endl;
+
+  delete calc;
 
 }
