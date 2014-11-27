@@ -37,7 +37,6 @@ AST* Parser::Stmts(AST* a) {
 }
 
 AST* Parser::Stmt() {
-  Token* t = scan -> getToken();
   return Expr();
 }
 
@@ -122,7 +121,7 @@ AST* Parser::Factor() {
     return tree;
   }
 
-  //The following if statement evaluates if the given 
+  //The following if statement evaluates if the given
   //identifier is a unary node identifier of a
   //leaf node identifier.
   if (t -> getType() == identifier && equalVerify) {
@@ -136,7 +135,7 @@ AST* Parser::Factor() {
       string strCalc = "CALCVAR_" + t -> getLex();
       char* envValue = getenv(strCalc.c_str());
       if (envValue != NULL)
-        return new IdentifierLNode(atoi(envValue)); 
+        return new IdentifierLNode(atoi(envValue));
 
       return new IdentifierLNode(0);
     }

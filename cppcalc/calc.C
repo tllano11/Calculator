@@ -33,7 +33,7 @@ void argVaribleInsert(string s) {
   for(int i = 0; i < length - 1; i++) {
     if(charArg[i] != '=') colCounter++;
     else break;
-    if(i == length - 2) 
+    if(i == length - 2)
       throw ArgsException;
   }
 
@@ -53,15 +53,15 @@ void argVaribleInsert(string s) {
   string strValue;
   if(int i = colCounter + 1 < length-1){
     for(int i = colCounter + 1; i < length-1; i++)
-      if(charArg[i]>='0' and charArg[i]<='9') 
-        strValue += charArg[i]; 
+      if(charArg[i]>='0' and charArg[i]<='9')
+        strValue += charArg[i];
       else throw ArgsException;
   }else throw ArgsException;
 
   //The following 2 lines are used to insert the number given
   //in the expression in the identifiers map.
   //Remark: atoi function converts a c string into an int if
-  //it's possible.  
+  //it's possible.
   int b = atoi(strValue.c_str());
   identifiers[charIdentifier] = b;
 }
@@ -148,7 +148,7 @@ void initCompiler(string line, int lineCounter){
 }
 
 //initFileCompiler creates, or superscribes, a .ewe file
-//which name is the same as a given .calc file.  
+//which name is the same as a given .calc file.
 void initFileCompiler(string file, int lineCounter){
   string eweFile = file.substr(0,(file.length()-5));
   eweFile = eweFile + ".ewe";
@@ -165,15 +165,15 @@ void initFileCompiler(string file, int lineCounter){
 //commandVerify checks the command line syntax.
 void commandVerify(int &i,char* argv[],int argc){
   string arg = argv[i];
-  string line;  
+  string line;
   int lineCounter = 0;
   int compilerCount = 0;
   bool vUsed = false;
-  
+
   //The following condition identifies if a variable is defined
   //in the command line.
   if(arg.compare("-v") == 0) argVaribleInsert(argv[++i]);
-  
+
   //The following condition checks if the user is trying to
   //execute a single .calc file or multiple .calc files.
   //Remark: If an argument, different from a .calc file, is
@@ -183,7 +183,7 @@ void commandVerify(int &i,char* argv[],int argc){
     int aux = i;
     string verify;
     while(aux < argc){
-      verify = argv[aux++]; 
+      verify = argv[aux++];
       if(!endsComparison(verify, ".calc")) throw ArgsException;
     }
     ifstream input(arg.c_str());
@@ -194,7 +194,7 @@ void commandVerify(int &i,char* argv[],int argc){
     if(i == argc-1) exit(0);
   }
 
-  //The following condition checks if the user wants to 
+  //The following condition checks if the user wants to
   //generate a .ewe file using the ewe compiler function
   //of the program.
   else if(arg.compare("-c") == 0 and compilerCount < 1){
@@ -209,7 +209,7 @@ void commandVerify(int &i,char* argv[],int argc){
       aux = i+1;
       while(aux < argc){
         i++;
-        initFileCompiler(argv[aux++],lineCounter); 
+        initFileCompiler(argv[aux++],lineCounter);
 
         output << "end: halt\n\n";
         output << "equ memory M[0]\n";
@@ -218,20 +218,20 @@ void commandVerify(int &i,char* argv[],int argc){
         output << "equ operator1 M[3]\n";
         output << "equ operator2 M[4]\n";
         output << "equ sp M[5]\n";
-    
+
         map<string, int>::iterator itr;
         int j = 6;
 
         //The following loop checks every identifier stored in the
         //identifiers map.
-        //Those identifiers are translated into ewe code as 
+        //Those identifiers are translated into ewe code as
         //instructions to allocate space in memory.
         for(itr=identifiers.begin(); itr!=identifiers.end();++itr){
           output << "equ "  << (*itr).first << " M["<< j << "]\n";
           j++;
         }
         output << "equ stack M[1000]\n";
-        output.close();      
+        output.close();
       }
       exit(0);
     }else if(i!= argc-1) throw ArgsException;
@@ -240,9 +240,9 @@ void commandVerify(int &i,char* argv[],int argc){
       while(getline(cin,line)){
         initCompiler(line,lineCounter);
         lineCounter++;
-        cout << "> "; 
+        cout << "> ";
       }
-    
+
       output << "end: halt\n\n";
       output << "equ memory M[0]\n";
       output << "equ one M[1]\n";
@@ -250,7 +250,7 @@ void commandVerify(int &i,char* argv[],int argc){
       output << "equ operator1 M[3]\n";
       output << "equ operator2 M[4]\n";
       output << "equ sp M[5]\n";
-    
+
       map<string, int>::iterator i;
       int j = 6;
       for(i=identifiers.begin(); i!=identifiers.end();++i){
@@ -271,7 +271,7 @@ void commandVerify(int &i,char* argv[],int argc){
 }
 
 int main(int argc, char* argv[], char* env[]) {
-  
+
   string line;
   eweCompiler = false;
   compilerCount = 0;
@@ -285,7 +285,7 @@ int main(int argc, char* argv[], char* env[]) {
       commandVerify(i,argv,argc);
     } catch(...) {
       cout << " * Invalid argument." << endl;
-      return 0; 
+      return 0;
     }
   }
   output.close();
@@ -293,7 +293,7 @@ int main(int argc, char* argv[], char* env[]) {
     cout << "> ";
     while(getline(cin,line)) {
     beginCalculation(line);
-      cout << "> ";
+    cout << "> ";
     }
   }
   cout << "" << endl;
